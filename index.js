@@ -16,9 +16,6 @@ module.exports = class VLCRenode {
         username: this._username,
         password: this._password
       },
-      headers: {
-          'Content-Type': 'application/json'
-      },
       json: true
     };
   }
