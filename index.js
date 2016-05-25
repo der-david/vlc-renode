@@ -33,7 +33,7 @@ module.exports = class VLCRenode {
       });
     });
   }
-  start(uri, noaudio, novideo) {
+  play(uri, noaudio, novideo) {
     var params = {
       command: 'in_play',
       input: uri
@@ -51,7 +51,7 @@ module.exports = class VLCRenode {
       input: uri
     });
   }
-  play(id) {
+  resume(id) {
     var params = {
       command: 'pl_play'
     };
