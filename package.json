@@ -1,0 +1,31 @@
+{
+  "name": "vlc-renode",
+  "version": "1.0.0",
+  "description": "A node module to control the HTTP-interface of VLC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/der-david/vlc-renode.git"
+  },
+  "keywords": [
+    "VLC",
+    "remote",
+    "renode",
+    "node",
+    "npm",
+    "control"
+  ],
+  "author": "davdev",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/der-david/vlc-renode/issues"
+  },
+  "homepage": "https://github.com/der-david/vlc-renode#readme",
+  "dependencies": {
+    "query-string": "^4.1.0",
+    "request": "^2.72.0"
+  }
+}
