@@ -25,7 +25,7 @@ module.exports = class VLCRenode {
   _req(params) {
     var options = this._options;
     if (typeof params === 'object' && options !== null) {
-      options.url += queryString.stringify(params);
+      options.url += '?' + queryString.stringify(params);
     }
     return new Promise((resolve, reject) => {
       request.get(options, (error, response, body) => {
