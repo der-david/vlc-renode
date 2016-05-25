@@ -20,7 +20,7 @@ module.exports = class VLCRenode {
     };
   }
   _req(params) {
-    var options = this._options;
+    var options = JSON.parse(JSON.stringify(this._options));
     if (typeof params === 'object' && options !== null) {
       options.url += '?' + queryString.stringify(params);
     }
