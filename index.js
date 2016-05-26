@@ -1,3 +1,4 @@
+"use strict";
 const request = require('request');
 const queryString = require('query-string');
 
