@@ -1,8 +1,12 @@
 # vlc-renode
 A node module to control the HTTP-interface of VLC.
+## install
+```
+npm install --save vlc-renode
+```
 
 ## sample usage
-###### `yourapp.js`
+###### `index.js`
 ```javascript
 "use strict";
 const
@@ -11,9 +15,10 @@ const
 
 var
   options = {
-    password: 'secret',
-    host: '127.0.0.1',
-    port: 8080
+    password: 'secret', // defaults to 'admin'
+    host: '127.0.0.1',  // defaults to 'localhost'
+    port: 8080,         // defaults to 8080 anyways
+    interval: 1000      // defaults to 500
   },
   process = spawn('vlc', ['-I', 'http', '--http-password', options.password, '--http-port', options.port], {
     stdio: 'ignore'
@@ -25,13 +30,19 @@ vlc.play('https://ia802508.us.archive.org/5/items/testmp3testfile/mpthreetest.mp
     vlc.pause();
   }, 3000);
 });
+
+// nested changes are published in a flattened format: 'change:stats.readbytes'
+vlc.on('change:volume', (oldVal, newVal) => {
+  console.log(oldVal);
+  console.log(newVal);
+});
 ```
 ###### strict and ES6 harmony mode required
 ```
-node yourapp.js --use_strict --harmony
+node index.js --use_strict --harmony
 ```
 
 ## TODO:
-* events
-* docs
-* tests
+* ☑ events (for simple state changes)
+* ☐ docs
+* ☐ tests
