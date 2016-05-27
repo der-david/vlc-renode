@@ -25,7 +25,10 @@ module.exports = class VLCRenode extends EventEmitter {
     this.connect();
   }
   connect() {
-    this._interval = setInterval(this._req, this._intervalMilSecs);
+    var self = this;
+    this._interval = setInterval(() => {
+      self._req()
+    }, this._intervalMilSecs);
   }
   disconnect() {
     clearInterval(this._interval);
