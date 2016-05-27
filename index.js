@@ -23,17 +23,9 @@ module.exports = class VLCRenode extends EventEmitter {
       json: true
     };
     this._state = {};
+    this._stateFlat = {};
     this._intervalMilSecs = (options.interval !== undefined && Number.isInteger(options.interval) && options.interval > 100) ? options.interval : 500;
     this.connect();
-  }
-  connect() {
-    var self = this;
-    this._interval = setInterval(() => {
-      self._req()
-    }, this._intervalMilSecs);
-  }
-  disconnect() {
-    clearInterval(this._interval);
   }
   _req(params) {
     var
@@ -47,23 +39,49 @@ module.exports = class VLCRenode extends EventEmitter {
         if (error) {
           return reject(error);
         }
+        var flatNew = flatJSON(body);
         if (self._state !== {}) {
-          var
-            flatOld = flatJSON(self._state),
-            flatNew = flatJSON(body);
           for (let attr in flatNew) {
-            if (flatOld[attr] != flatNew[attr]) {
-              self.emit('change:' + attr, flatOld[attr], flatNew[attr]);
+            if (self._stateFlat[attr] != flatNew[attr]) {
+              self.emit('change:' + attr, self._stateFlat[attr], flatNew[attr]);
             }
           }
         }
         self._state = body;
+        self._stateFlat = flatNew;
         return resolve(body);
       });
     });
   }
+  connect() {
+    var self = this;
+    this._interval = setInterval(() => {
+      self._req()
+    }, this._intervalMilSecs);
+  }
+  disconnect() {
+    clearInterval(this._interval);
+  }
+  state(key) {
+    var
+      path = key.split('.'),
+			cfg = this._state,
+			result = null,
+			l = path.length - 1,
+			i = 0;
+		for (let k of path) {
+			if (typeof cfg === 'object' && cfg[k] !== undefined) {
+				cfg = cfg[k];
+				if (i === l) {
+					result = cfg;
+				}
+			}
+			i++;
+		}
+		return result;
+  }
   isPlaying() {
-    return self._state.state === 'playing';
+    return this.state('state') === 'playing';
   }
   play(uri, noaudio, novideo) {
     var params = {
