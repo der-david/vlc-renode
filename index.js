@@ -2,7 +2,8 @@
 const
   EventEmitter = require('events'),
   request = require('request'),
-  queryString = require('query-string');
+  queryString = require('query-string'),
+  flatJSON = require('flatjson');
 
 module.exports = class VLCRenode extends EventEmitter {
   constructor(options) {
