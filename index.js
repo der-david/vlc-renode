@@ -1,27 +1,39 @@
 "use strict";
-const request = require('request');
-const queryString = require('query-string');
+const
+  EventEmitter = require('events'),
+  request = require('request'),
+  queryString = require('query-string');
 
-module.exports = class VLCRenode {
+module.exports = class VLCRenode extends EventEmitter {
   constructor(options) {
     if (typeof options !== 'object' || options === null) {
       options = {};
     }
     this._host = options.host || 'localhost';
     this._port = options.port || 8080;
-    this._username = options.username || '';
     this._password = options.password || 'admin';
     this._options = {
       url: 'http://' + this._host + ':' + this._port + '/requests/status.json',
       auth: {
-        username: this._username,
+        username: '',
         password: this._password
       },
       json: true
     };
+    this._state = {};
+    this._intervalMilSecs = (options.interval !== undefined && Number.isInteger(options.interval) && options.interval > 100) ? options.interval : 500;
+    this.connect();
+  }
+  connect() {
+    this._interval = setInterval(this._req, this._intervalMilSecs);
+  }
+  disconnect() {
+    clearInterval(this._interval);
   }
   _req(params) {
-    var options = JSON.parse(JSON.stringify(this._options));
+    var
+      self = this,
+      options = JSON.parse(JSON.stringify(this._options));
     if (typeof params === 'object' && options !== null) {
       options.url += '?' + queryString.stringify(params);
     }
@@ -30,9 +42,23 @@ module.exports = class VLCRenode {
         if (error) {
           return reject(error);
         }
+        if (self._state !== {}) {
+          var
+            flatOld = flatJSON(self._state),
+            flatNew = flatJSON(body);
+          for (let attr in flatNew) {
+            if (flatOld[attr] != flatNew[attr]) {
+              self.emit('change:' + attr, flatOld[attr], flatNew[attr]);
+            }
+          }
+        }
+        self._state = body;
         return resolve(body);
       });
     });
+  }
+  isPlaying() {
+    return self._state.state === 'playing';
   }
   play(uri, noaudio, novideo) {
     var params = {
