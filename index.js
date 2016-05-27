@@ -6,6 +6,7 @@ const
 
 module.exports = class VLCRenode extends EventEmitter {
   constructor(options) {
+    super();
     if (typeof options !== 'object' || options === null) {
       options = {};
     }
